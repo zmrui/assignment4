@@ -1,4 +1,4 @@
 git add -A
 git commit -m "commit"
 git push
-git fetch
+git pull
