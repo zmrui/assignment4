@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<head>
+
+   <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+
+   <style>
+      .chart rect {
+         fill: steelblue;
+      }
+
+      .chart text {
+         fill: black;
+         font: 5px sans-serif;
+         text-anchor: end;
+      }
+   </style>
+</head>
+
+<svg class="chart"></svg>
+
+<script>
+
+   var width = 400,
+      barHeight = 20,
+      cnt = 0,
+      max_data = 0;
+
+   var x = d3.scaleLinear()
+             .range([10, width]);
+
+   var chart = d3.select(".chart")
+      .attr("height", width + 50);
+
+   var tooltip = chart.append("text")
+      .style("visibility", "hidden");
+
+   d3.tsv("state_population_gdp.tsv", type, function (error, data) {
+      console.log(data)
+      max_data = d3.max(data, function (d) { return d.population; });
+      console.log(max_data);
+      x.domain([0, max_data]);
+
+      chart.attr("width", barHeight * data.length);
+
+      var bar = chart.selectAll("g")
+                     .data(data)
+                     .enter().append("g")
+                     .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + x(max_data - d.population) + ")"; });
+
+      bar.append("rect")
+         .attr("height", function (d) { return x(d.population); })
+         .attr("width", barHeight - 1);
+
+      bar.append("text")
+         .attr("y", 0)
+         .attr("x", barHeight - 1 )
+         // .attr("dx", ".35em")
+         .text(function(d) { return d.population; });
+   });
+
+   function type(d) {
+      d.population = +d.population; // coerce to number
+      return d;
+   }
+
+
+</script>

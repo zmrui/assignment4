@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <h2>Access and Create Page Elements by D3</h2>
+
+        <div id="demo"></div>
+
+    <script>
+        // Access the div element by id
+        d3.select("#demo").html("Text added to an existing div element by D3!");
+        
+        // Create a new div element
+        var body = d3.select("body");
+        var div = body.append("div");
+        div.html("A div element is created by D3 and then text added!");
+
+        //d3.select("body").append("div").html("A div element is created by D3 and then text added!");
+
+    </script> 
+    </body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h2>Access and Create Page Elements by JavaScript</h2>
+
+        <div id="demo"></div>
+
+    <script>
+        // Access the div element by id
+        document.getElementById("demo").innerHTML = "Text added to an existing div element!";
+
+        // Create a new div element
+        var div = document.createElement("div");
+        div.innerHTML = "A div element is created and then text added!";
+        document.body.appendChild(div);
+    </script> 
+    </body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<head>
+    
+    <script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+
+    <style>
+        .chart rect {
+            fill: steelblue;
+        }
+        
+        .chart text {
+            fill: white;
+            font: 10px sans-serif;
+            text-anchor: end;
+        }          
+    </style>
+</head>
+
+<svg class="chart"></svg>
+
+<script>
+
+    var height = 420,
+        barHeight = 20;
+
+    var x = d3.scaleLinear()
+        .range([0, height]);
+
+    // Select the SVG element and set the Canvas pixel dimension (width)
+    // Set the width by inceasing it beyond the fixed width (420 px)
+    // This is required to overlay the text of a bar beyond the boundary of the widest bar
+    var chart = d3.select(".chart")
+        .attr("height", height + 50);
+
+    /*
+    A "text" element is appended to set the "tooltip" text. 
+    The DOM style "visibility" property sets or returns whether an element should be visible.
+    Initially the "tooltip" text is kept invisible.
+    */
+    var tooltip = chart.append("text")
+        .style("visibility", "hidden");  
+
+    d3.csv("data.csv", type, function(error, data) {
+        x.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+        chart.attr("width", barHeight * data.length);
+        
+		//var bar = allgroup.selectAll("g")
+        var bar = chart.selectAll("g")
+            .data(data)
+            .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+
+        bar.append("rect")
+            .attr("height", function(d) { return x(d.value); })
+            .attr("width", barHeight)
+            // .on("mouseover", function(d, i){ // Add event listner
+            //     var tipx = d3.select(this).attr("width");
+            //     var tipy = barHeight* i;
+            //     tooltip.attr("x", tipx); 	// get the width of the current bar	
+            //     tooltip.attr("y", tipy);    // get the height of the current bar
+            //     tooltip.attr("dx", 20);     // get the position relative to x-coordinate to display the "tooltip" text
+            //     tooltip.attr("dy", 12);     // get the position relative to y-coordinate to display the "tooltip" text
+            //     tooltip.style("visibility", "visible");  // make the "tooltip" text visible 
+            //     tooltip.style("fill", "black"); // set the color of the "tooltip" text 
+            //     tooltip.text(d.value);})      // get the data value to display in the "tooltip" text 
+            // .on("mouseout", function(){
+            //     tooltip.style("visibility", "hidden");});
+
+        bar.append("text")
+            .attr("y", function(d) { return x(d.value) - 3; })
+            .attr("x", function(d){return y(d.value)})
+            .attr("dx", ".35em")
+            .text(function(d) { return d.value; });
+        });
+
+    function type(d) {
+    d.value = +d.value; // coerce to number
+    return d;
+    }
+
+</script>
