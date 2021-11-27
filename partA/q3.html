@@ -11,7 +11,7 @@
 
         .chart text {
             fill: black;
-            font: 5px sans-serif;
+            font: 6px sans-serif;
             text-anchor: end;
         }
     </style>
@@ -24,10 +24,11 @@
     var width = 400,
         barHeight = 20,
         cnt = 0,
-        max_data = 0;
+        max_data = 0,
+        blank_height = 10;
 
     var y = d3.scaleLinear()
-        .range([10, width]);
+        .range([blank_height, width]);
 
     var chart = d3.select(".chart")
         .attr("height", width + 50);
@@ -50,13 +51,13 @@
             .attr("height", function (d) { return y(d.population); })
             .attr("width", barHeight - 1);
 
-        bar.on("mouseover", function (d,i) {
-            // console.info(this); 
+        bar.on("mouseover", function (d,i) { 
             var tipx = barHeight * (i + 1);
-            var tipy = (width - d3.select(this).select("rect").attr("height"))? 0 : 5;
-            console.info(tipx,tipy);
+            var tipy = y(max_data - d.population);
             tooltip.attr("y", tipy);
             tooltip.attr("x", tipx);
+            tooltip.attr("dx", 0);
+            tooltip.attr("dy", -2);
             tooltip.style("visibility", "visible");
             tooltip.text(d.population);
         });
