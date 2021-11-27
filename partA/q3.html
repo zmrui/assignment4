@@ -2,7 +2,7 @@
 
 <head>
 
-    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
 
     <style>
         .chart rect {
@@ -36,9 +36,7 @@
         .style("visibility", "hidden");
 
     d3.tsv("state_population_gdp.tsv", type, function (error, data) {
-        console.log(data)
         max_data = d3.max(data, function (d) { return d.population; });
-        console.log(max_data);
         x.domain([0, max_data]);
 
         chart.attr("width", barHeight * data.length);
@@ -48,20 +46,22 @@
             .enter().append("g")
             .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + x(max_data - d.population) + ")"; });
 
-        // bar.selectAll("rect")
         bar.append("rect")
             .attr("height", function (d) { return x(d.population); })
             .attr("width", barHeight - 1);
-        bar.selectAll("rect")
-            .on("mouseover", function () {
-                bar.select(this)
-                  .attr("fill", "orange");
-            });
-
-        //   bar.append("text")
-        //      .attr("y", 0)
-        //      .attr("x", barHeight - 1 )
-        //      .text(function(d) { return d.population; });
+        bar.on("mouseover", function () {
+            console.info(this);
+            var rect = d3.select(this);
+            rect.append("text")
+                .attr("y", 0)
+                .attr("x", barHeight - 1)
+                .text(function (d) { return d.population; });
+        });
+        bar.on("mouseout", function () {
+            console.info(this);
+            var rect_text = d3.selectAll("text");
+            rect_text.style("visibility", "hidden");
+        });
     });
 
     function type(d) {
