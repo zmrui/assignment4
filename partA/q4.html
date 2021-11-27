@@ -26,7 +26,7 @@
         cnt = 0,
         max_data = 0;
 
-    var y = d3.scaleLinear()
+    var x = d3.scaleLinear()
         .range([10, width]);
 
     var chart = d3.select(".chart")
@@ -37,34 +37,33 @@
 
     d3.tsv("state_population_gdp.tsv", type, function (error, data) {
         max_data = d3.max(data, function (d) { return d.population; });
-        y.domain([0, max_data]);
+        x.domain([0, max_data]);
 
         chart.attr("width", barHeight * data.length);
 
         var bar = chart.selectAll("g")
             .data(data)
             .enter().append("g")
-            .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.population) + ")"; });
+            .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + x(max_data - d.population) + ")"; });
 
         bar.append("rect")
-            .attr("height", function (d) { return y(d.population); })
+            .attr("height", function (d) { return x(d.population); })
             .attr("width", barHeight - 1);
-
-        bar.on("mouseover", function (d,i) {
-            // console.info(this); 
-            var tipx = barHeight * (i + 1);
-            var tipy = (width - d3.select(this).select("rect").attr("height"))? 0 : 5;
-            console.info(tipx,tipy);
-            tooltip.attr("y", tipy);
-            tooltip.attr("x", tipx);
-            tooltip.style("visibility", "visible");
-            tooltip.text(d.population);
+        bar.on("mouseover", function () {
+            var group = d3.select(this);
+            console.info(group);
+            group.append("text")
+                .attr("y", 0)
+                .attr("x", barHeight - 1)
+                .text(function (d) { return d.population; });
+            group.selectAll("rect").attr("fill", "orange");
+            console.info(group.select("rect"));
         });
-
         bar.on("mouseout", function () {
-            tooltip.style("visibility", "hidden");
+            console.info(this);
+            d3.selectAll("text").remove();
+            // rect_text.style("visibility", "hidden");
         });
-
     });
 
     function type(d) {
