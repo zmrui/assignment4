@@ -12,6 +12,7 @@
       .chart text {
          fill: black;
          font: 5px sans-serif;
+
          text-anchor: end;
       }
    </style>
@@ -24,10 +25,11 @@
    var width = 400,
       barHeight = 20,
       cnt = 0,
-      max_data = 0;
+      max_data = 0,
+      blank_height = 10;
 
-   var x = d3.scaleLinear()
-             .range([10, width]);
+   var y = d3.scaleLinear()
+             .range([blank_height, width]);
 
    var chart = d3.select(".chart")
       .attr("height", width + 50);
@@ -39,17 +41,17 @@
       console.log(data)
       max_data = d3.max(data, function (d) { return d.population; });
       console.log(max_data);
-      x.domain([0, max_data]);
+      y.domain([0, max_data]);
 
       chart.attr("width", barHeight * data.length);
 
       var bar = chart.selectAll("g")
                      .data(data)
                      .enter().append("g")
-                     .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + x(max_data - d.population) + ")"; });
+                     .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.population) + ")"; });
 
       bar.append("rect")
-         .attr("height", function (d) { return x(d.population); })
+         .attr("height", function (d) { return y(d.population); })
          .attr("width", barHeight - 1);
 
       bar.append("text")
