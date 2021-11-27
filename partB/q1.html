@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<head>
+
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+
+    <style>
+        /* .chart rect {
+            fill: steelblue;
+        } */
+        .div1 {
+            text-align:center;
+        }
+        .chart {
+            display:inline-block;
+        }
+        .chart text {
+            fill: black;
+            font: 6px sans-serif;
+            text-anchor: end;
+        }
+    </style>
+</head>
+    <div class="div1">
+        <svg class="chart"></svg>
+    </div>
+<script>
+
+    var width = 400,
+        barHeight = 20,
+        cnt = 0,
+        max_data = 0,
+        blank_height = 10;
+
+    var y = d3.scaleLinear()
+        .range([blank_height, width]);
+
+    var chart = d3.select(".chart")
+        .attr("height", width + 50);
+
+    var tooltip = chart.append("text")
+        .style("visibility", "hidden");
+
+    d3.tsv("state_population_gdp.tsv", type, function (error, data) {
+        max_data = d3.max(data, function (d) { return d.gdp; });
+        y.domain([0, max_data]);
+
+        chart.attr("width", barHeight * data.length);
+
+        var bar = chart.selectAll("g")
+            .data(data)
+            .enter().append("g")
+            .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.gdp) + ")"; });
+
+        bar.append("rect")
+            .attr("height", function (d) { return y(d.gdp); })
+            .attr("width", barHeight - 1)
+            .attr("fill", "steelblue");
+
+        bar.on("mouseover", function (d,i) { 
+            console.info(d3.select(this).select("rect"));
+            d3.select(this).select("rect")
+              .attr("fill", "orange");
+            var tipx = barHeight * (i + 1);
+            var tipy = y(max_data - d.gdp);
+            tooltip.attr("y", tipy);
+            tooltip.attr("x", tipx);
+            tooltip.attr("dx", 0);
+            tooltip.attr("dy", -2);
+            tooltip.style("visibility", "visible");
+            tooltip.text(d.gdp);
+        });
+
+        bar.on("mouseout", function () {
+            d3.selectAll("rect")
+              .attr("fill", "steelblue");
+            tooltip.style("visibility", "hidden");
+        });
+
+    });
+
+    function type(d) {
+        d.gdp = +d.gdp; // coerce to number
+        return d;
+    }
+
+
+</script>
