@@ -29,7 +29,7 @@
 <script>
 
     var height = 400,
-        barHeight = 22,
+        barHeight = 21,
         max_data = 0,
         blank_height = 10;
 
@@ -51,7 +51,7 @@
         // var bar = chart.selectAll("g")
         //                .data(data)
         //                .enter().append("g");
-                    //    .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.gdp) + ")"; });
+        //    .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.gdp) + ")"; });
 
         var bar = chart.selectAll("rect")
             .data(data)
@@ -88,9 +88,10 @@
                 .attr("fill", "orange");
             var tipx = d3.select(this).attr("x");
             var tipy = d3.select(this).attr("y");
+            console.log(tipx,tipy);
             tooltip.attr("y", tipy);
             tooltip.attr("x", tipx);
-            tooltip.attr("dx", 0);
+            tooltip.attr("dx", 20);
             tooltip.attr("dy", -2);
             tooltip.style("visibility", "visible");
             tooltip.text(d.gdp);
