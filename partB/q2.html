@@ -86,11 +86,11 @@
         bar.on("mouseover", function (d, i) {
             d3.select(this)
                 .attr("fill", "orange");
-            var tipx = barHeight * (i + 1);
-            var tipy = y(max_data - d.gdp);
+            var tipx = d3.select(this).attr("x");
+            var tipy = d3.select(this).attr("y");
             tooltip.attr("y", tipy);
             tooltip.attr("x", tipx);
-            tooltip.attr("dx", 0);
+            tooltip.attr("dx", 20);
             tooltip.attr("dy", -2);
             tooltip.style("visibility", "visible");
             tooltip.text(d.gdp);
