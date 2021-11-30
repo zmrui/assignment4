@@ -29,7 +29,7 @@
 <script>
 
     var height = 400,
-        barHeight = 20,
+        barHeight = 22,
         max_data = 0,
         blank_height = 10;
 
@@ -90,7 +90,7 @@
             var tipy = d3.select(this).attr("y");
             tooltip.attr("y", tipy);
             tooltip.attr("x", tipx);
-            tooltip.attr("dx", 20);
+            tooltip.attr("dx", 0);
             tooltip.attr("dy", -2);
             tooltip.style("visibility", "visible");
             tooltip.text(d.gdp);
