@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<head>
+
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+
+    <style>
+        /* .chart rect {
+            fill: steelblue;
+        } */
+        .div1 {
+            text-align: center;
+        }
+
+        .chart {
+            display: inline-block;
+        }
+
+        .chart text {
+            fill: black;
+            font: 6px sans-serif;
+            text-anchor: end;
+        }
+    </style>
+</head>
+<div class="div1">
+    <svg class="chart"></svg>
+</div>
+<script>
+
+    var height = 400,
+        barHeight = 21,
+        max_data_gdp = 0,
+        max_data_population = 0,
+        blank_height = 10;
+
+    var x = d3.scaleLinear()
+    .range([0, height * 2]);
+    var y = d3.scaleLinear()
+    .range([blank_height, height]);
+    console.log(height, height * 2)
+    var chart = d3.select(".chart")
+        .attr("height", height + 50);
+
+    var tooltip = chart.append("text")
+        .style("visibility", "hidden");
+
+    d3.tsv("state_population_gdp.tsv", type, function (error, data) {
+        max_data_gdp = d3.max(data, function (d) { return d.gdp; });
+        max_data_population = d3.max(data, function (d) { return d.population; })
+        y.domain([0, max_data_gdp]);
+        x.domain([0,max_data_population]);
+
+        chart.attr("width", barHeight * data.length);
+
+        var bar = chart.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { 
+                return x(d.population);
+            })
+            .attr("cy",function (d) { return y(max_data_gdp - d.gdp); })
+            .attr("r", 4)
+            .attr("fill", "steelblue");
+
+    });
+
+    function type(d) {
+        d.gdp = +d.gdp; // coerce to number
+        d.population = +d.population;
+        return d;
+    }
+
+</script>
