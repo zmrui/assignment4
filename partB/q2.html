@@ -28,16 +28,16 @@
 </div>
 <script>
 
-    var width = 400,
+    var height = 400,
         barHeight = 20,
         max_data = 0,
         blank_height = 10;
 
     var y = d3.scaleLinear()
-        .range([blank_height, width]);
+    .range([blank_height, height]);
 
     var chart = d3.select(".chart")
-        .attr("height", width + 50);
+        .attr("height", height + 50);
 
     var tooltip = chart.append("text")
         .style("visibility", "hidden");
@@ -48,12 +48,19 @@
 
         chart.attr("width", barHeight * data.length);
 
-        var bar = chart.selectAll("g")
-                       .data(data)
-                       .enter().append("g")
-                       .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.gdp) + ")"; });
+        // var bar = chart.selectAll("g")
+        //                .data(data)
+        //                .enter().append("g");
+                    //    .attr("transform", function (d, i) { return "translate(" + (i * barHeight) + "," + y(max_data - d.gdp) + ")"; });
 
-        bar.append("rect")
+        var bar = chart.selectAll("rect")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) { 
+                return i * barHeight;
+            })
+            .attr("y",function (d) { return y(max_data - d.gdp); })
             .attr("height", function (d) { return y(d.gdp); })
             .attr("width", barHeight - 1)
             .attr("fill", "steelblue")
@@ -69,7 +76,7 @@
             .transition()
             .duration(2000)
             .attr("x", function (d,i) {
-                return (i+1) * barHeight;
+                return i * barHeight;
             })
             .attr("y", function (d,i) {
                 return y(max_data - d.gdp);
@@ -77,8 +84,7 @@
         };
 
         bar.on("mouseover", function (d, i) {
-            console.info(d3.select(this).select("rect"));
-            d3.select(this).select("rect")
+            d3.select(this)
                 .attr("fill", "orange");
             var tipx = barHeight * (i + 1);
             var tipy = y(max_data - d.gdp);
