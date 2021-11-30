@@ -15,3 +15,9 @@ with open("state_population_gdp.tsv") as fd:
         height=population/maxhight*h
         print(template%(cnt,name,x,y,height))
 
+
+for i <- 1 to k
+   for j <- 1 to k
+      do if edge(i,j) is not exist 
+      return false
+return true
