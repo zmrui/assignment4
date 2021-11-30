@@ -37,12 +37,9 @@
     var x = d3.scaleLinear()
     .range([4 * barHeight, height * 2]);
     var y = d3.scaleLinear()
-    .range([blank_height, height]);
+    .range([2 * blank_height, height]);
     var chart = d3.select(".chart")
     .attr("height", height + 50);
-
-    var tooltip = chart.append("text")
-    .style("visibility", "hidden");
 
     d3.tsv("state_population_gdp.tsv", type, function (error, data) {
         max_data_gdp = d3.max(data, function (d) { return d.gdp; });
@@ -51,7 +48,6 @@
         x.domain([0,max_data_population]);
 
         chart.attr("width", barHeight * data.length);
-
         var bar = chart.selectAll("circle")
             .data(data)
             .enter()
@@ -62,6 +58,9 @@
             .attr("cy",function (d) { return y(max_data_gdp - d.gdp); })
             .attr("r", 4)
             .attr("fill", "steelblue");
+            
+        var tooltip = chart.append("text")
+            .style("visibility", "hidden");
 
         bar.on("mouseover", function (d, i) {
             d3.select(this)

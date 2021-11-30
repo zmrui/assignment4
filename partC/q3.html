@@ -18,7 +18,7 @@
 
         .chart text {
             fill: black;
-            font: 6px sans-serif;
+            font: 8px sans-serif;
             text-anchor: end;
         }
     </style>
@@ -29,21 +29,17 @@
 <script>
 
     var height = 400,
-        barHeight = 21,
+        barHeight = 20,
         max_data_gdp = 0,
         max_data_population = 0,
         blank_height = 10;
 
     var x = d3.scaleLinear()
-    .range([0, height * 2]);
+    .range([4 * barHeight, height * 2]);
     var y = d3.scaleLinear()
-    .range([blank_height, height]);
-    console.log(height, height * 2)
+    .range([2 * blank_height, height]);
     var chart = d3.select(".chart")
-        .attr("height", height + 50);
-
-    var tooltip = chart.append("text")
-        .style("visibility", "hidden");
+    .attr("height", height + 50);
 
     d3.tsv("state_population_gdp.tsv", type, function (error, data) {
         max_data_gdp = d3.max(data, function (d) { return d.gdp; });
@@ -52,7 +48,6 @@
         x.domain([0,max_data_population]);
 
         chart.attr("width", barHeight * data.length);
-
         var bar = chart.selectAll("circle")
             .data(data)
             .enter()
@@ -62,38 +57,23 @@
             })
             .attr("cy",function (d) { return y(max_data_gdp - d.gdp); })
             .attr("r", 4)
-            // .attr("height", function (d) { return y(d.gdp); })
-            // .attr("width", barHeight - 1)
             .attr("fill", "steelblue");
-            // .on("click",function() {
-            //     sortBars();
-
-        // var sortBars = function() {
-        //     d3.selectAll("rect")
-        //     .sort(function (a,b) {
-        //         return d3.ascending(a.gdp, b.gdp);
-        //     })
-        //     .transition()
-        //     .duration(2000)
-        //     .attr("x", function (d,i) {
-        //         return i * barHeight;
-        //     })
-        //     .attr("y", function (d,i) {
-        //         return y(max_data_gdp - d.gdp);
-        //     });
-        // };
+            
+        var tooltip = chart.append("text")
+            .style("visibility", "hidden");
 
         bar.on("mouseover", function (d, i) {
             d3.select(this)
                 .attr("fill", "orange");
-            var tipx = d3.select(this).attr("x");
-            var tipy = d3.select(this).attr("y");
+            var tipx = d3.select(this).attr("cx");
+            var tipy = d3.select(this).attr("cy");
+            console.log(tipx,tipy)
             tooltip.attr("y", tipy);
             tooltip.attr("x", tipx);
             tooltip.attr("dx", 20);
-            tooltip.attr("dy", -2);
+            tooltip.attr("dy", -6);
             tooltip.style("visibility", "visible");
-            tooltip.text(d.state + ":" + d.gdp/d.population);
+            tooltip.text(d.state + ":  " + (d.gdp/d.population).toFixed(2));
         });
 
         bar.on("mouseout", function () {
