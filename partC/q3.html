@@ -5,9 +5,6 @@
     <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
 
     <style>
-        /* .chart rect {
-            fill: steelblue;
-        } */
         .div1 {
             text-align: center;
         }
@@ -27,38 +24,59 @@
     <svg class="chart"></svg>
 </div>
 <script>
-
     var height = 400,
+        width = 800,
         barHeight = 20,
         max_data_gdp = 0,
         max_data_population = 0,
         blank_height = 10;
-
+    var margin = ({top: 2 * barHeight, right: barHeight, bottom: 2 * barHeight, left: 4 * barHeight})
     var x = d3.scaleLinear()
-    .range([4 * barHeight, height * 2]);
+        .range([margin.left, width - margin.right]);
     var y = d3.scaleLinear()
-    .range([2 * blank_height, height]);
-    var chart = d3.select(".chart")
-    .attr("height", height + 50);
+        .range([height - margin.bottom, margin.top]);
+    var chart = d3.select(".chart").attr("viewBox",[0,0,width,height]);   
+    var xTitle = g => g.append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", 10)
+    .attr("x", width-margin.right)
+    .text("population");
+
+    var yTitle = g => g.append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", 8)
+    .attr("x",0)
+    .attr("y", margin.top)
+    .text("gdp");
 
     d3.tsv("state_population_gdp.tsv", type, function (error, data) {
         max_data_gdp = d3.max(data, function (d) { return d.gdp; });
         max_data_population = d3.max(data, function (d) { return d.population; })
-        y.domain([0, max_data_gdp]);
-        x.domain([0,max_data_population]);
+        y.domain([0,max_data_gdp]);
+        x.domain([0, max_data_population]);
 
         chart.attr("width", barHeight * data.length);
         var bar = chart.selectAll("circle")
             .data(data)
             .enter()
             .append("circle")
-            .attr("cx", function (d) { 
+            .attr("cx", function (d) {
                 return x(d.population);
             })
-            .attr("cy",function (d) { return y(max_data_gdp - d.gdp); })
+            .attr("cy", function (d) { return y(d.gdp); })
             .attr("r", 4)
             .attr("fill", "steelblue");
             
+        chart.append("g")
+             .attr("transform", `translate(0,${height - margin.bottom})`)
+             .call(d3.axisBottom(x))
+             .call(xTitle);
+
+        chart.append("g")
+             .attr("transform", `translate(${margin.left},0)`)
+             .call(d3.axisLeft(y))
+             .call(yTitle);
+        
         var tooltip = chart.append("text")
             .style("visibility", "hidden");
 
@@ -67,18 +85,18 @@
                 .attr("fill", "orange");
             var tipx = d3.select(this).attr("cx");
             var tipy = d3.select(this).attr("cy");
-            console.log(tipx,tipy)
+            console.log(tipx, tipy)
             tooltip.attr("y", tipy);
             tooltip.attr("x", tipx);
             tooltip.attr("dx", 20);
             tooltip.attr("dy", -6);
             tooltip.style("visibility", "visible");
-            tooltip.text(d.state + ":  " + (d.gdp/d.population).toFixed(2));
+            tooltip.text(d.state + ":  " + (d.gdp / d.population).toFixed(2));
         });
 
         bar.on("mouseout", function () {
             d3.selectAll("circle")
-              .attr("fill", "steelblue");
+                .attr("fill", "steelblue");
             tooltip.style("visibility", "hidden");
         });
 
